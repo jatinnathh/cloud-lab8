@@ -1,14 +1,15 @@
-variable "enable_k8s" {
-  default = true
-}
 provider "kubernetes" {
   config_path = "~/.kube/config"
 }
+
+
 
 ############################
 # NGINX DEPLOYMENT
 ############################
 resource "kubernetes_deployment_v1" "nginx" {
+  count = var.enable_k8s ? 1 : 0
+
   metadata {
     name = "nginx-deployment"
     labels = {
@@ -50,6 +51,8 @@ resource "kubernetes_deployment_v1" "nginx" {
 # NGINX SERVICE
 ############################
 resource "kubernetes_service_v1" "nginx_service" {
+  count = var.enable_k8s ? 1 : 0
+
   metadata {
     name = "nginx-service"
   }
@@ -72,6 +75,8 @@ resource "kubernetes_service_v1" "nginx_service" {
 # MONGODB DEPLOYMENT
 ############################
 resource "kubernetes_deployment_v1" "mongodb" {
+  count = var.enable_k8s ? 1 : 0
+
   metadata {
     name = "mongodb"
     labels = {
@@ -113,6 +118,8 @@ resource "kubernetes_deployment_v1" "mongodb" {
 # MONGODB SERVICE
 ############################
 resource "kubernetes_service_v1" "mongodb_service" {
+  count = var.enable_k8s ? 1 : 0
+
   metadata {
     name = "mongodb-service"
   }
