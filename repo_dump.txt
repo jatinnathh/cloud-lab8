@@ -1,6 +1,4 @@
-variable "enable_k8s" {
-  default = true
-}
+﻿===== C:\Users\Jatin\Desktop\iiitk\Sem 6\cloud computing\Lab 8\main.tf =====
 provider "kubernetes" {
   config_path = "~/.kube/config"
 }
@@ -130,3 +128,56 @@ resource "kubernetes_service_v1" "mongodb_service" {
     type = "ClusterIP"
   }
 }
+
+
+===== C:\Users\Jatin\Desktop\iiitk\Sem 6\cloud computing\Lab 8\outputs.tf =====
+output "nginx_service_name" {
+  value = kubernetes_service_v1.nginx_service.metadata[0].name
+}
+
+output "mongodb_service_name" {
+  value = kubernetes_service_v1.mongodb_service.metadata[0].name
+}
+
+
+===== C:\Users\Jatin\Desktop\iiitk\Sem 6\cloud computing\Lab 8\variables.tf =====
+variable "namespace" {
+  default = "default"
+}
+
+
+===== C:\Users\Jatin\Desktop\iiitk\Sem 6\cloud computing\Lab 8\.github\workflows\deploy.yml =====
+name: CI/CD Terraform Kubernetes MongoDB
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Format Check
+        run: terraform fmt -check
+
+      - name: Terraform Validate
+        run: terraform validate
+
+      - name: Terraform Plan
+        run: terraform plan
+
+      - name: Note
+        run: echo "Terraform apply is executed locally with Minikube"
+
+
