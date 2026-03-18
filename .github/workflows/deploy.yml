@@ -1,4 +1,4 @@
-name: Terraform Deploy
+name: Terraform CI/CD Pipeline
 
 on:
   push:
@@ -7,10 +7,11 @@ on:
 
 jobs:
   terraform:
+    name: Terraform Deploy
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repo
+      - name: Checkout Code
         uses: actions/checkout@v3
 
       - name: Setup Terraform
