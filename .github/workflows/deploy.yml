@@ -1,4 +1,4 @@
-name: Terraform CI/CD Pipeline
+name: CI/CD Terraform Kubernetes MongoDB
 
 on:
   push:
@@ -11,13 +11,16 @@ jobs:
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v2
+        uses: hashicorp/setup-terraform@v3
 
       - name: Terraform Init
         run: terraform init
+
+      - name: Terraform Format Check
+        run: terraform fmt -check
 
       - name: Terraform Validate
         run: terraform validate
@@ -25,6 +28,5 @@ jobs:
       - name: Terraform Plan
         run: terraform plan
 
-      # ❌ Remove apply OR make it optional
-      - name: Skip Apply (Local Cluster Only)
-        run: echo "Terraform apply runs locally with Minikube"
+      - name: Note
+        run: echo "Terraform apply is executed locally with Minikube"
