@@ -26,7 +26,7 @@ jobs:
         run: terraform validate
 
       - name: Terraform Plan (CI Safe Mode)
-        run: terraform plan -var="enable_k8s=false"
+        run: terraform plan -var="enable_k8s=false" -refresh=false
 
       - name: Info
         run: echo "Terraform apply is executed locally with Minikube"

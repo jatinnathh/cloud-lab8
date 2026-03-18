@@ -3,10 +3,14 @@ provider "kubernetes" {
   config_path = "~/.kube/config"
 }
 
+
+
 ############################
 # NGINX DEPLOYMENT
 ############################
 resource "kubernetes_deployment_v1" "nginx" {
+  count = var.enable_k8s ? 1 : 0
+
   metadata {
     name = "nginx-deployment"
     labels = {
@@ -48,6 +52,8 @@ resource "kubernetes_deployment_v1" "nginx" {
 # NGINX SERVICE
 ############################
 resource "kubernetes_service_v1" "nginx_service" {
+  count = var.enable_k8s ? 1 : 0
+
   metadata {
     name = "nginx-service"
   }
@@ -70,6 +76,8 @@ resource "kubernetes_service_v1" "nginx_service" {
 # MONGODB DEPLOYMENT
 ############################
 resource "kubernetes_deployment_v1" "mongodb" {
+  count = var.enable_k8s ? 1 : 0
+
   metadata {
     name = "mongodb"
     labels = {
@@ -111,6 +119,8 @@ resource "kubernetes_deployment_v1" "mongodb" {
 # MONGODB SERVICE
 ############################
 resource "kubernetes_service_v1" "mongodb_service" {
+  count = var.enable_k8s ? 1 : 0
+
   metadata {
     name = "mongodb-service"
   }
@@ -132,17 +142,23 @@ resource "kubernetes_service_v1" "mongodb_service" {
 
 ===== C:\Users\Jatin\Desktop\iiitk\Sem 6\cloud computing\Lab 8\outputs.tf =====
 output "nginx_service_name" {
-  value = kubernetes_service_v1.nginx_service.metadata[0].name
+  value = var.enable_k8s ? kubernetes_service_v1.nginx_service[0].metadata[0].name : "disabled"
 }
 
 output "mongodb_service_name" {
-  value = kubernetes_service_v1.mongodb_service.metadata[0].name
+  value = var.enable_k8s ? kubernetes_service_v1.mongodb_service[0].metadata[0].name : "disabled"
 }
 
 
 ===== C:\Users\Jatin\Desktop\iiitk\Sem 6\cloud computing\Lab 8\variables.tf =====
 variable "namespace" {
   default = "default"
+}
+
+variable "enable_k8s" {
+  description = "Enable Kubernetes resources"
+  type        = bool
+  default     = true
 }
 
 
@@ -174,10 +190,10 @@ jobs:
       - name: Terraform Validate
         run: terraform validate
 
-      - name: Terraform Plan
-        run: terraform plan
+      - name: Terraform Plan (CI Safe Mode)
+        run: terraform plan -var="enable_k8s=false"
 
-      - name: Note
+      - name: Info
         run: echo "Terraform apply is executed locally with Minikube"
 
 
